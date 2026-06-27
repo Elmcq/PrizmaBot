@@ -1,6 +1,8 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { statusBedrock } = require('minecraft-server-util');
+const { SlashCommandBuilder } = require('discord.js');
 const server = require('../config/server.json');
+const { createEmbed } = require('../utils/embeds');
+const { getBedrockStatus, isTimeoutError } = require('../utils/minecraft');
+const logger = require('../utils/logger');
 
 function getPlayerSummary(response) {
   const online = response.players?.online ?? response.onlinePlayers ?? 'Unknown';
@@ -38,19 +40,14 @@ module.exports = {
     await interaction.deferReply();
 
     try {
-      const response = await statusBedrock(server.ip, server.port, {
-        timeout: 5000,
-        enableSRV: false,
-      });
+      const response = await getBedrockStatus();
       const players = getPlayerSummary(response);
 
-      const embed = new EmbedBuilder()
-        .setColor(server.color)
-        .setTitle(`${server.name} Players`)
-        .setDescription('Current Minecraft Bedrock player information.')
-        .addFields({ name: 'Players Online', value: players.count, inline: true })
-        .setTimestamp()
-        .setFooter({ text: server.footer });
+      const embed = createEmbed({
+        title: `${server.name} Players`,
+        description: 'Current Minecraft Bedrock player information.',
+        fields: [{ name: 'Players Online', value: players.count, inline: true }],
+      });
 
       if (players.names) {
         embed.addFields({ name: 'Player Names', value: players.names, inline: false });
@@ -60,15 +57,18 @@ module.exports = {
 
       await interaction.editReply({ embeds: [embed] });
     } catch (error) {
-      console.error('Failed to fetch Bedrock player information:', error);
+      logger.error('Failed to fetch Bedrock player information', error);
 
-      const embed = new EmbedBuilder()
-        .setColor(0xef4444)
-        .setTitle(`${server.name} Players`)
-        .setDescription('Server is **offline** or player information is unavailable right now.')
-        .addFields({ name: 'Address', value: `\`${server.ip}:${server.port}\``, inline: false })
-        .setTimestamp()
-        .setFooter({ text: server.footer });
+      const description = isTimeoutError(error)
+        ? 'Minecraft server did not respond.'
+        : 'Server is currently offline or under maintenance.';
+
+      const embed = createEmbed({
+        title: `${server.name} Players`,
+        description,
+        color: 0xef4444,
+        fields: [{ name: 'Address', value: `\`${server.ip}:${server.port}\``, inline: false }],
+      });
 
       await interaction.editReply({ embeds: [embed] });
     }

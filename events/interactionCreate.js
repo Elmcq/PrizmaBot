@@ -1,12 +1,14 @@
 const { Events, Collection } = require('discord.js');
+const { createErrorEmbed } = require('../utils/embeds');
+const logger = require('../utils/logger');
 
-async function sendSafeError(interaction, content) {
+async function sendSafeError(interaction, embed) {
   if (interaction.deferred || interaction.replied) {
-    await interaction.followUp({ content, ephemeral: true });
+    await interaction.followUp({ embeds: [embed], ephemeral: true });
     return;
   }
 
-  await interaction.reply({ content, ephemeral: true });
+  await interaction.reply({ embeds: [embed], ephemeral: true });
 }
 
 module.exports = {
@@ -17,8 +19,8 @@ module.exports = {
     const command = interaction.client.commands.get(interaction.commandName);
 
     if (!command) {
-      console.error(`No command matching ${interaction.commandName} was found.`);
-      await sendSafeError(interaction, 'Command not found.');
+      logger.warn(`No command matching ${interaction.commandName} was found.`);
+      await sendSafeError(interaction, createErrorEmbed('Command not found.'));
       return;
     }
 
@@ -49,11 +51,18 @@ module.exports = {
     timestamps.set(interaction.user.id, now);
     setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
 
+    const startedAt = Date.now();
+
     try {
       await command.execute(interaction);
+      logger.command(interaction, Date.now() - startedAt);
     } catch (error) {
-      console.error(`Error executing /${interaction.commandName}:`, error);
-      await sendSafeError(interaction, 'There was an error while executing this command.');
+      logger.error(`Error executing /${interaction.commandName}`, error);
+      logger.command(interaction, Date.now() - startedAt, true);
+      await sendSafeError(
+        interaction,
+        createErrorEmbed('Sorry, that command failed unexpectedly. Please try again in a moment.'),
+      );
     }
   },
 };

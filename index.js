@@ -3,13 +3,12 @@ const path = require('node:path');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 require('dotenv').config();
 
-const requiredEnv = ['DISCORD_TOKEN'];
-const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+const { validateStartupConfig } = require('./utils/config');
+const logger = require('./utils/logger');
 
-if (missingEnv.length > 0) {
-  console.error(`Missing required environment variable(s): ${missingEnv.join(', ')}`);
-  process.exit(1);
-}
+validateStartupConfig();
+
+const startupStartedAt = Date.now();
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds],
@@ -28,7 +27,7 @@ for (const file of commandFiles) {
   if ('data' in command && 'execute' in command) {
     client.commands.set(command.data.name, command);
   } else {
-    console.warn(`[WARNING] Command at ${filePath} is missing "data" or "execute".`);
+    logger.warn(`Command at ${filePath} is missing "data" or "execute".`);
   }
 }
 
@@ -46,4 +45,19 @@ for (const file of eventFiles) {
   }
 }
 
-client.login(process.env.DISCORD_TOKEN);
+client.startupStartedAt = startupStartedAt;
+
+process.on('unhandledRejection', (error) => {
+  logger.error('Unhandled promise rejection', error);
+});
+
+process.on('uncaughtException', (error) => {
+  logger.error('Uncaught exception', error);
+});
+
+client.login(process.env.DISCORD_TOKEN)
+  .then(() => logger.info('Discord login request accepted.'))
+  .catch((error) => {
+    logger.error('Discord login failed', error);
+    process.exit(1);
+  });

@@ -1,6 +1,8 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { statusBedrock } = require('minecraft-server-util');
+const { SlashCommandBuilder } = require('discord.js');
 const server = require('../config/server.json');
+const { createEmbed } = require('../utils/embeds');
+const { getBedrockStatus, isTimeoutError } = require('../utils/minecraft');
+const logger = require('../utils/logger');
 
 function formatMotd(response) {
   if (typeof response.motd === 'string') return response.motd;
@@ -28,38 +30,35 @@ module.exports = {
     await interaction.deferReply();
 
     try {
-      const response = await statusBedrock(server.ip, server.port, {
-        timeout: 5000,
-        enableSRV: false,
-      });
+      const response = await getBedrockStatus();
 
-      const embed = new EmbedBuilder()
-        .setColor(server.color)
-        .setTitle(`${server.name} Status`)
-        .setDescription('Server is **online**.')
-        .addFields(
+      const embed = createEmbed({
+        title: `${server.name} Status`,
+        description: 'Server is **online**.',
+        fields: [
           { name: 'Address', value: `\`${server.ip}:${server.port}\``, inline: false },
           { name: 'MOTD', value: formatMotd(response), inline: false },
           { name: 'Version', value: formatVersion(response), inline: true },
           { name: 'Players', value: formatPlayers(response), inline: true },
-        )
-        .setTimestamp()
-        .setFooter({ text: server.footer });
+        ],
+      });
 
       await interaction.editReply({ embeds: [embed] });
     } catch (error) {
-      console.error('Failed to ping Bedrock server:', error);
+      logger.error('Failed to ping Bedrock server', error);
 
-      const embed = new EmbedBuilder()
-        .setColor(0xef4444)
-        .setTitle(`${server.name} Status`)
-        .setDescription('Server is **offline** or unreachable right now.')
-        .addFields(
+      const description = isTimeoutError(error)
+        ? 'Minecraft server did not respond.'
+        : 'Server is currently offline or under maintenance.';
+
+      const embed = createEmbed({
+        title: `${server.name} Status`,
+        description,
+        color: 0xef4444,
+        fields: [
           { name: 'Address', value: `\`${server.ip}:${server.port}\``, inline: false },
-          { name: 'Details', value: 'Please try again later.', inline: false },
-        )
-        .setTimestamp()
-        .setFooter({ text: server.footer });
+        ],
+      });
 
       await interaction.editReply({ embeds: [embed] });
     }

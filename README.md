@@ -1,15 +1,6 @@
-# Prizma
+# Prizma Bot
 
 Prizma is a Discord.js v14 Minecraft Bedrock utility bot for Ideology Prizmarine.
-
-## Features
-
-- Slash commands
-- Modular command and event structure
-- Discord embeds
-- Cooldowns
-- Basic error handling
-- Minecraft Bedrock server status ping
 
 ## Commands
 
@@ -19,21 +10,21 @@ Prizma is a Discord.js v14 Minecraft Bedrock utility bot for Ideology Prizmarine
 - `/player` - Show player count and player names if available.
 - `/rules` - Show server rules.
 
-## Server
+## Requirements
 
-- IP: `147.185.221.26`
-- Port: `59177`
-- Edition: Minecraft Bedrock
+- Node.js 20 or newer
+- Discord.js 14.26.4
+- A Discord application with a bot token
 
-## Setup
-
-1. Install dependencies:
+## Installation
 
 ```bash
 npm install
 ```
 
-2. Copy `.env.example` to `.env` and fill in your Discord bot credentials:
+## Configuration
+
+Create a `.env` file in the project root:
 
 ```env
 DISCORD_TOKEN=your_discord_bot_token_here
@@ -41,52 +32,66 @@ CLIENT_ID=your_discord_application_client_id_here
 GUILD_ID=your_discord_server_guild_id_here
 ```
 
-3. Deploy slash commands to your Discord guild:
+Configure the Minecraft server in `config/server.json`:
+
+```json
+{
+  "name": "Ideology Prizmarine",
+  "botName": "Prizma",
+  "ip": "147.185.221.26",
+  "port": 59177,
+  "color": "#2dd4bf",
+  "footer": "Prizma - Ideology Prizmarine"
+}
+```
+
+Startup validates `DISCORD_TOKEN`, `CLIENT_ID`, `GUILD_ID`, and `config/server.json`. If anything is missing or invalid, the bot exits with a clear console message.
+
+## Deploy Commands
+
+Deploy the existing slash commands to the configured guild:
 
 ```bash
 npm run deploy
 ```
 
-4. Start the bot:
+## Start Bot
 
 ```bash
 npm start
 ```
 
-## Discord Bot Setup Notes
+When the bot starts, it prints a colored startup banner with the bot name, Discord.js version, Node.js version, guild count, loaded command count, and startup time.
 
-- Enable the bot application in the Discord Developer Portal.
-- Invite the bot with the `bot` and `applications.commands` scopes.
-- The bot only needs basic slash command permissions for these commands.
-
-## Project Structure
+## Folder Structure
 
 ```text
 .
-├── commands
-│   ├── help.js
-│   ├── ip.js
-│   ├── player.js
-│   ├── rules.js
-│   └── status.js
-├── config
-│   └── server.json
-├── events
-│   ├── interactionCreate.js
-│   └── ready.js
-├── .env.example
-├── deploy-commands.js
-├── index.js
-├── package.json
-└── README.md
+|-- commands
+|   |-- help.js
+|   |-- ip.js
+|   |-- player.js
+|   |-- rules.js
+|   `-- status.js
+|-- config
+|   `-- server.json
+|-- events
+|   |-- interactionCreate.js
+|   `-- ready.js
+|-- utils
+|   |-- config.js
+|   |-- embeds.js
+|   |-- logger.js
+|   `-- minecraft.js
+|-- deploy-commands.js
+|-- index.js
+|-- package-lock.json
+|-- package.json
+`-- README.md
 ```
 
-## Rules
+## Notes
 
-1. No griefing
-2. No stealing
-3. No cheating/hack/X-ray
-4. No toxic/drama berlebihan
-5. Respect admin/member
-6. Baca pengumuman
-7. Have fun
+- No new slash commands are added in this release.
+- `/status` and `/player` cap Minecraft server checks at 5 seconds.
+- Command errors are logged with stack traces and return a friendly embed instead of crashing the bot.

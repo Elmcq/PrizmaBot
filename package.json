@@ -1,6 +1,6 @@
 {
   "name": "prizma-bot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Discord.js v14 Minecraft Bedrock utility bot for Ideology Prizmarine.",
   "main": "index.js",
   "scripts": {
@@ -22,6 +22,6 @@
     "minecraft-server-util": "^5.4.4"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   }
 }
