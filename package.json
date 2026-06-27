@@ -1,0 +1,27 @@
+{
+  "name": "prizma-bot",
+  "version": "1.0.0",
+  "description": "Discord.js v14 Minecraft Bedrock utility bot for Ideology Prizmarine.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "deploy": "node deploy-commands.js"
+  },
+  "keywords": [
+    "discord",
+    "discord.js",
+    "minecraft",
+    "bedrock",
+    "bot"
+  ],
+  "author": "Ideology Prizmarine",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "14.26.4",
+    "dotenv": "^16.4.7",
+    "minecraft-server-util": "^5.4.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
