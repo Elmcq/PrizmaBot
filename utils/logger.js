@@ -1,3 +1,5 @@
+const { recordCommand } = require('./stats');
+
 function timestamp() {
   return new Date().toISOString();
 }
@@ -31,11 +33,21 @@ function command(interaction, durationMs, result = {}) {
   const guildName = interaction.guild?.name || 'Direct Message';
   const guildId = interaction.guildId || interaction.guild?.id || 'none';
   const errorMessage = result.errorMessage ? ` | error="${result.errorMessage}"` : '';
+  const loggedAt = new Date();
+
+  recordCommand({
+    commandName: interaction.commandName,
+    durationMs,
+    guild: `${guildName} / ${guildId}`,
+    success,
+    timestamp: loggedAt,
+    user,
+  });
 
   info([
     `command=/${interaction.commandName}`,
     `status=${status}`,
-    `timestamp=${timestamp()}`,
+    `timestamp=${loggedAt.toISOString()}`,
     `duration=${durationMs}ms`,
     `user="${user}"`,
     `channel="${channelName} / ${channelId}"`,

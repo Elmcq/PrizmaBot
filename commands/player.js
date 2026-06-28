@@ -44,7 +44,7 @@ module.exports = {
       const players = getPlayerSummary(response);
 
       const embed = createEmbed({
-        title: `${server.name} Players`,
+        title: 'Online Players',
         description: 'Current Minecraft Bedrock player information.',
         fields: [{ name: 'Players Online', value: players.count, inline: true }],
       });
@@ -64,7 +64,7 @@ module.exports = {
         : 'Server is currently offline or under maintenance.';
 
       const embed = createEmbed({
-        title: `${server.name} Players`,
+        title: 'Online Players',
         description,
         color: 0xef4444,
         fields: [{ name: 'Address', value: `\`${server.ip}:${server.port}\``, inline: false }],

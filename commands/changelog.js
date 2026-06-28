@@ -4,16 +4,16 @@ const { createEmbed } = require('../utils/embeds');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('changelog')
-    .setDescription('Show the latest Prizma changelog.'),
+    .setDescription('Show the latest bot changelog.'),
   cooldown: 5,
   async execute(interaction) {
     const embed = createEmbed({
-      title: 'Changelog - v1.5.0 Phase 1',
+      title: 'Changelog',
       description: [
-        '- Fixed /about command',
-        '- Added /version command',
-        '- Added /changelog command',
-        '- Improved embed consistency',
+        '- Improved /health status indicator',
+        '- Improved /stats visibility',
+        '- Added per-command in-memory usage tracking',
+        '- Added last command and most-used command stats',
       ].join('\n'),
     });
 

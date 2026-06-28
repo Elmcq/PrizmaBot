@@ -9,7 +9,7 @@ function formatDuration(ms) {
   if (days) parts.push(`${days}d`);
   if (hours) parts.push(`${hours}h`);
   if (minutes) parts.push(`${minutes}m`);
-  if (!parts.length) parts.push(`${seconds}s`);
+  parts.push(`${seconds}s`);
 
   return parts.join(' ');
 }

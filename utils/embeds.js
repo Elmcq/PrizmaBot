@@ -1,10 +1,12 @@
 const { EmbedBuilder } = require('discord.js');
 const server = require('../config/server.json');
 
+const EMBED_AUTHOR_NAME = 'Ideology Prizmarine Bot';
+
 function createEmbed({ title, description, color = server.color, fields = [] } = {}) {
   const embed = new EmbedBuilder()
     .setColor(color)
-    .setAuthor({ name: server.botName })
+    .setAuthor({ name: EMBED_AUTHOR_NAME })
     .setTimestamp()
     .setFooter({ text: server.footer });
 
@@ -24,6 +26,7 @@ function createErrorEmbed(description = 'Something went wrong while running this
 }
 
 module.exports = {
+  EMBED_AUTHOR_NAME,
   createEmbed,
   createErrorEmbed,
 };

@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require('discord.js');
-const server = require('../config/server.json');
 const { createEmbed } = require('../utils/embeds');
 
 const rules = [
@@ -19,7 +18,7 @@ module.exports = {
   cooldown: 5,
   async execute(interaction) {
     const embed = createEmbed({
-      title: `${server.name} Rules`,
+      title: 'Server Rules',
       description: rules.map((rule, index) => `**${index + 1}.** ${rule}`).join('\n'),
     });
 

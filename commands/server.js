@@ -30,7 +30,7 @@ module.exports = {
       const latency = Date.now() - startedAt;
 
       const embed = createEmbed({
-        title: `${server.name} Server`,
+        title: 'Minecraft Server',
         description: 'Server is **online**.',
         fields: [
           { name: 'Status', value: 'Online', inline: true },
@@ -56,7 +56,7 @@ module.exports = {
         : 'Server is currently offline or under maintenance.';
 
       const embed = createEmbed({
-        title: `${server.name} Server`,
+        title: 'Minecraft Server',
         description,
         color: 0xef4444,
         fields: [

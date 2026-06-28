@@ -5,6 +5,10 @@ const logger = require('./logger');
 const MINECRAFT_TIMEOUT_MS = 5000;
 const HTTP_STATUS_TIMEOUT_MS = 5000;
 const MCSTATUS_BEDROCK_URL = 'https://api.mcstatus.io/v2/status/bedrock';
+const USER_AGENT = 'PrizmaBot/1.6.1';
+
+let fallbackWarningLogged = false;
+let usingFallback = false;
 
 function isTimeoutError(error) {
   const message = String(error?.message || '').toLowerCase();
@@ -17,16 +21,29 @@ function isTimeoutError(error) {
 
 async function getBedrockStatus() {
   try {
-    return await getBedrockStatusFromUdp();
+    const response = await getBedrockStatusFromUdp();
+    usingFallback = false;
+    return response;
   } catch (udpError) {
     try {
       const response = await getBedrockStatusFromHttp();
-      logger.warn(`Bedrock UDP status failed; using mcstatus.io fallback: ${udpError.message}`);
+
+      if (!fallbackWarningLogged || !usingFallback) {
+        logger.warn(`Bedrock UDP status failed; using mcstatus.io fallback: ${udpError.message}`);
+        fallbackWarningLogged = true;
+      }
+
+      usingFallback = true;
       response.statusSource = 'mcstatus.io';
       response.udpError = udpError;
       return response;
     } catch (httpError) {
+      usingFallback = false;
       httpError.cause = udpError;
+      logger.error(
+        `Bedrock UDP status failed (${udpError.message}) and mcstatus.io fallback also failed`,
+        httpError,
+      );
       throw httpError;
     }
   }
@@ -97,7 +114,7 @@ async function getBedrockStatusFromHttp() {
       signal: controller.signal,
       headers: {
         accept: 'application/json',
-        'user-agent': 'PrizmaBot/1.5.0',
+        'user-agent': USER_AGENT,
       },
     });
 

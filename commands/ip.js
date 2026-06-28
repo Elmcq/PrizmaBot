@@ -9,7 +9,7 @@ module.exports = {
   cooldown: 5,
   async execute(interaction) {
     const embed = createEmbed({
-      title: `${server.name} Server IP`,
+      title: 'Server Address',
       fields: [
         { name: 'IP', value: `\`${server.ip}\``, inline: true },
         { name: 'Port', value: `\`${server.port}\``, inline: true },

@@ -4,12 +4,12 @@ const { getBedrockStatus } = require('../utils/minecraft');
 const { formatVersion } = require('../utils/statusFormat');
 const logger = require('../utils/logger');
 
-const BOT_VERSION = 'v1.5.0';
+const BOT_VERSION = 'v1.6.1';
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('version')
-    .setDescription('Show Prizma runtime and server versions.'),
+    .setDescription('Show bot runtime and server versions.'),
   cooldown: 15,
   async execute(interaction) {
     await interaction.deferReply();
@@ -24,7 +24,7 @@ module.exports = {
     }
 
     const embed = createEmbed({
-      title: 'Prizma Version',
+      title: 'Version',
       fields: [
         { name: 'Bot Version', value: BOT_VERSION, inline: true },
         { name: 'Node.js', value: process.version, inline: true },

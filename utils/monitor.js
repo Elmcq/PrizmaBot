@@ -57,7 +57,7 @@ async function getNotificationChannel(client) {
 
 function createOnlineEmbed(state) {
   return createEmbed({
-    title: `${server.name} Online`,
+    title: 'Server Online',
     description: 'Minecraft server is back **online**.',
     fields: [
       { name: 'Status', value: 'Online', inline: true },
@@ -74,7 +74,7 @@ function createOnlineEmbed(state) {
 
 function createOfflineEmbed(state) {
   return createEmbed({
-    title: `${server.name} Offline`,
+    title: 'Server Offline',
     description: 'Minecraft server is now **offline** or unreachable.',
     color: OFFLINE_COLOR,
     fields: [
@@ -87,7 +87,7 @@ function createOfflineEmbed(state) {
 
 function createPlayerChangeEmbed(state, previousSnapshot) {
   return createEmbed({
-    title: `${server.name} Player Count Changed`,
+    title: 'Player Count Changed',
     description: 'Minecraft server player count changed.',
     fields: [
       { name: 'Previous', value: previousSnapshot.playersLabel, inline: true },
@@ -100,7 +100,7 @@ function createPlayerChangeEmbed(state, previousSnapshot) {
 
 function createVersionChangeEmbed(state, previousSnapshot) {
   return createEmbed({
-    title: `${server.name} Version Changed`,
+    title: 'Version Changed',
     description: 'Minecraft server version changed.',
     fields: [
       { name: 'Previous', value: previousSnapshot.version, inline: true },

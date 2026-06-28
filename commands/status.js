@@ -33,7 +33,7 @@ module.exports = {
       const response = await getBedrockStatus();
 
       const embed = createEmbed({
-        title: `${server.name} Status`,
+        title: 'Server Status',
         description: 'Server is **online**.',
         fields: [
           { name: 'Address', value: `\`${server.ip}:${server.port}\``, inline: false },
@@ -52,7 +52,7 @@ module.exports = {
         : 'Server is currently offline or under maintenance.';
 
       const embed = createEmbed({
-        title: `${server.name} Status`,
+        title: 'Server Status',
         description,
         color: 0xef4444,
         fields: [
