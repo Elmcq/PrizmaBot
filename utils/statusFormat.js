@@ -25,10 +25,23 @@ function formatVersion(response) {
   return response?.version?.name || response?.version || 'Unavailable';
 }
 
+function getOnlinePlayers(response) {
+  return response?.players?.online ?? response?.onlinePlayers ?? null;
+}
+
+function getMaxPlayers(response) {
+  return response?.players?.max ?? response?.maxPlayers ?? null;
+}
+
 function formatPlayers(response) {
-  const online = response?.players?.online ?? response?.onlinePlayers ?? 'Unknown';
-  const max = response?.players?.max ?? response?.maxPlayers ?? 'Unknown';
+  const online = getOnlinePlayers(response) ?? 'Unknown';
+  const max = getMaxPlayers(response) ?? 'Unknown';
   return `${online} / ${max}`;
+}
+
+function formatLatency(ms) {
+  if (!Number.isFinite(ms) || ms < 0) return 'Unavailable';
+  return `${Math.round(ms)}ms`;
 }
 
 function formatEdition(response) {
@@ -47,8 +60,11 @@ module.exports = {
   formatCheckedTime,
   formatDuration,
   formatEdition,
+  formatLatency,
   formatMotd,
   formatPlayers,
   formatStatusSource,
   formatVersion,
+  getMaxPlayers,
+  getOnlinePlayers,
 };

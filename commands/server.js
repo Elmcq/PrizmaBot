@@ -5,10 +5,12 @@ const { getBedrockStatus, isTimeoutError } = require('../utils/minecraft');
 const {
   formatCheckedTime,
   formatEdition,
+  formatLatency,
   formatMotd,
-  formatPlayers,
   formatStatusSource,
   formatVersion,
+  getMaxPlayers,
+  getOnlinePlayers,
 } = require('../utils/statusFormat');
 const logger = require('../utils/logger');
 
@@ -21,9 +23,11 @@ module.exports = {
     await interaction.deferReply();
 
     const checkedAt = new Date();
+    const startedAt = Date.now();
 
     try {
       const response = await getBedrockStatus();
+      const latency = Date.now() - startedAt;
 
       const embed = createEmbed({
         title: `${server.name} Server`,
@@ -31,10 +35,13 @@ module.exports = {
         fields: [
           { name: 'Status', value: 'Online', inline: true },
           { name: 'Edition', value: formatEdition(response), inline: true },
-          { name: 'Address', value: `\`${server.ip}:${server.port}\``, inline: false },
+          { name: 'Address', value: `\`${server.ip}\``, inline: true },
+          { name: 'Port', value: `\`${server.port}\``, inline: true },
           { name: 'MOTD', value: formatMotd(response), inline: false },
-          { name: 'Version', value: formatVersion(response), inline: true },
-          { name: 'Players', value: formatPlayers(response), inline: true },
+          { name: 'Online Players', value: String(getOnlinePlayers(response) ?? 'Unavailable'), inline: true },
+          { name: 'Max Players', value: String(getMaxPlayers(response) ?? 'Unavailable'), inline: true },
+          { name: 'Minecraft Version', value: formatVersion(response), inline: true },
+          { name: 'Latency', value: formatLatency(latency), inline: true },
           { name: 'Source', value: formatStatusSource(response), inline: true },
           { name: 'Checked', value: formatCheckedTime(checkedAt), inline: false },
         ],
@@ -54,7 +61,8 @@ module.exports = {
         color: 0xef4444,
         fields: [
           { name: 'Status', value: 'Offline', inline: true },
-          { name: 'Address', value: `\`${server.ip}:${server.port}\``, inline: false },
+          { name: 'Address', value: `\`${server.ip}\``, inline: true },
+          { name: 'Port', value: `\`${server.port}\``, inline: true },
           { name: 'Checked', value: formatCheckedTime(checkedAt), inline: false },
         ],
       });

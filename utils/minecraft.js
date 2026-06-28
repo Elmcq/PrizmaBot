@@ -97,7 +97,7 @@ async function getBedrockStatusFromHttp() {
       signal: controller.signal,
       headers: {
         accept: 'application/json',
-        'user-agent': 'PrizmaBot/1.0.1',
+        'user-agent': 'PrizmaBot/1.5.0',
       },
     });
 

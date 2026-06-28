@@ -8,8 +8,8 @@ module.exports = {
   once: true,
   execute(client) {
     client.user.setPresence({
-      status: 'online',
-      activities: [{ name: server.name, type: ActivityType.Watching }],
+      status: 'idle',
+      activities: [{ name: '\uD83D\uDFE1 Checking server', type: ActivityType.Watching }],
     });
 
     logger.info(`${server.botName} is online as ${client.user.tag}.`);

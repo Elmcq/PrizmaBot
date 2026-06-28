@@ -22,12 +22,25 @@ function error(message, err) {
   }
 }
 
-function command(interaction, durationMs, failed = false) {
-  const guild = interaction.guild?.name || interaction.guildId || 'Direct Message';
-  const user = `${interaction.user.tag} (${interaction.user.id})`;
-  const status = failed ? 'failed' : 'completed';
+function command(interaction, durationMs, result = {}) {
+  const success = result.success !== false;
+  const status = success ? 'success' : 'error';
+  const user = `${interaction.user.tag || interaction.user.username} / ${interaction.user.id}`;
+  const channelName = interaction.channel?.name || 'Direct Message';
+  const channelId = interaction.channelId || interaction.channel?.id || 'unknown';
+  const guildName = interaction.guild?.name || 'Direct Message';
+  const guildId = interaction.guildId || interaction.guild?.id || 'none';
+  const errorMessage = result.errorMessage ? ` | error="${result.errorMessage}"` : '';
 
-  info(`/${interaction.commandName} ${status} in ${durationMs}ms | user=${user} | guild=${guild}`);
+  info([
+    `command=/${interaction.commandName}`,
+    `status=${status}`,
+    `timestamp=${timestamp()}`,
+    `duration=${durationMs}ms`,
+    `user="${user}"`,
+    `channel="${channelName} / ${channelId}"`,
+    `guild="${guildName} / ${guildId}"`,
+  ].join(' | ') + errorMessage);
 }
 
 function banner({ botName, discordVersion, nodeVersion, guildCount, commandCount, startupTimeMs }) {

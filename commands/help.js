@@ -12,6 +12,8 @@ module.exports = {
       title: `${server.botName} Help`,
       description: `Minecraft Bedrock utility commands for **${server.name}**.`,
       fields: [
+        { name: '/about', value: 'Show bot, community, version, and uptime information.', inline: false },
+        { name: '/changelog', value: 'Show the latest Prizma changelog.', inline: false },
         { name: '/help', value: 'Show this command list.', inline: false },
         { name: '/ip', value: 'Show the Minecraft Bedrock server IP and port.', inline: false },
         { name: '/ping', value: 'Show bot latency, Discord API latency, and uptime.', inline: false },
@@ -20,6 +22,7 @@ module.exports = {
         { name: '/motd', value: 'Show the Minecraft server MOTD.', inline: false },
         { name: '/player', value: 'Show current player count and names if available.', inline: false },
         { name: '/rules', value: 'Show the server rules.', inline: false },
+        { name: '/version', value: 'Show bot, runtime, Discord, and Minecraft server versions.', inline: false },
       ],
     });
 
