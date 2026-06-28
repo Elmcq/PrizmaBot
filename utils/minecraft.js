@@ -2,8 +2,6 @@ const { statusBedrock } = require('minecraft-server-util');
 const server = require('../config/server.json');
 
 const MINECRAFT_TIMEOUT_MS = 5000;
-const statusHost = server.statusIp || server.ip;
-const statusPort = server.statusPort || server.port;
 
 function isTimeoutError(error) {
   const message = String(error?.message || '').toLowerCase();
@@ -27,7 +25,7 @@ async function getBedrockStatus() {
 
   try {
     return await Promise.race([
-      statusBedrock(statusHost, statusPort, {
+      statusBedrock(server.ip, server.port, {
         timeout: MINECRAFT_TIMEOUT_MS,
         enableSRV: false,
       }),

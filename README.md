@@ -40,15 +40,10 @@ Configure the Minecraft server in `config/server.json`:
   "botName": "Prizma",
   "ip": "147.185.221.26",
   "port": 59177,
-  "statusIp": "127.0.0.1",
-  "statusPort": 19132,
   "color": "#2dd4bf",
   "footer": "Prizma - Ideology Prizmarine"
 }
 ```
-
-`ip` and `port` are the public Playit.gg address shown by `/ip`.
-`statusIp` and `statusPort` are used internally by `/status` and `/player`; on a VPS running the bot and Bedrock server together, point these at the local Bedrock listener instead of the Playit.gg relay.
 
 Startup validates `DISCORD_TOKEN`, `CLIENT_ID`, `GUILD_ID`, and `config/server.json`. If anything is missing or invalid, the bot exits with a clear console message.
 

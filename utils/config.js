@@ -41,19 +41,6 @@ function validateServerConfig() {
     failConfig('config/server.json port must be an integer between 1 and 65535');
   }
 
-  if (server.statusIp !== undefined && typeof server.statusIp !== 'string') {
-    failConfig('config/server.json statusIp must be a string when provided');
-  }
-
-  if (server.statusIp === '') {
-    failConfig('config/server.json statusIp cannot be empty when provided');
-  }
-
-  if (server.statusPort !== undefined
-    && (!Number.isInteger(server.statusPort) || server.statusPort < 1 || server.statusPort > 65535)) {
-    failConfig('config/server.json statusPort must be an integer between 1 and 65535 when provided');
-  }
-
   return server;
 }
 
