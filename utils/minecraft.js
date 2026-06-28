@@ -1,7 +1,10 @@
 const { statusBedrock } = require('minecraft-server-util');
 const server = require('../config/server.json');
+const logger = require('./logger');
 
 const MINECRAFT_TIMEOUT_MS = 5000;
+const HTTP_STATUS_TIMEOUT_MS = 5000;
+const MCSTATUS_BEDROCK_URL = 'https://api.mcstatus.io/v2/status/bedrock';
 
 function isTimeoutError(error) {
   const message = String(error?.message || '').toLowerCase();
@@ -13,6 +16,23 @@ function isTimeoutError(error) {
 }
 
 async function getBedrockStatus() {
+  try {
+    return await getBedrockStatusFromUdp();
+  } catch (udpError) {
+    try {
+      const response = await getBedrockStatusFromHttp();
+      logger.warn(`Bedrock UDP status failed; using mcstatus.io fallback: ${udpError.message}`);
+      response.statusSource = 'mcstatus.io';
+      response.udpError = udpError;
+      return response;
+    } catch (httpError) {
+      httpError.cause = udpError;
+      throw httpError;
+    }
+  }
+}
+
+async function getBedrockStatusFromUdp() {
   let timeoutId;
 
   const timeout = new Promise((_, reject) => {
@@ -36,8 +56,66 @@ async function getBedrockStatus() {
   }
 }
 
+function normalizeMcstatusResponse(response) {
+  if (!response?.online) {
+    const error = new Error('Minecraft server is offline according to mcstatus.io.');
+    error.code = 'MINECRAFT_OFFLINE';
+    throw error;
+  }
+
+  return {
+    edition: response.edition,
+    motd: {
+      raw: response.motd?.raw || response.motd?.clean || 'Unavailable',
+      clean: response.motd?.clean || response.motd?.raw || 'Unavailable',
+      html: response.motd?.html || '',
+    },
+    version: {
+      name: response.version?.name || 'Unavailable',
+      protocol: response.version?.protocol ?? null,
+    },
+    players: {
+      online: response.players?.online ?? 0,
+      max: response.players?.max ?? 0,
+      list: Array.isArray(response.players?.list) ? response.players.list : [],
+    },
+    serverID: response.server_id || null,
+    gameMode: response.gamemode || null,
+    gameModeID: null,
+    portIPv4: response.port || null,
+    portIPv6: null,
+  };
+}
+
+async function getBedrockStatusFromHttp() {
+  const address = encodeURIComponent(`${server.ip}:${server.port}`);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), HTTP_STATUS_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(`${MCSTATUS_BEDROCK_URL}/${address}?timeout=5`, {
+      signal: controller.signal,
+      headers: {
+        accept: 'application/json',
+        'user-agent': 'PrizmaBot/1.0.1',
+      },
+    });
+
+    if (!response.ok) {
+      const error = new Error(`mcstatus.io returned HTTP ${response.status}`);
+      error.code = 'MCSTATUS_HTTP_ERROR';
+      throw error;
+    }
+
+    return normalizeMcstatusResponse(await response.json());
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 module.exports = {
   MINECRAFT_TIMEOUT_MS,
+  HTTP_STATUS_TIMEOUT_MS,
   getBedrockStatus,
   isTimeoutError,
 };

@@ -93,5 +93,6 @@ When the bot starts, it prints a colored startup banner with the bot name, Disco
 ## Notes
 
 - No new slash commands are added in this release.
-- `/status` and `/player` cap Minecraft server checks at 5 seconds.
+- `/status` and `/player` try the Bedrock UDP status ping first, then fall back to the mcstatus.io Bedrock HTTP API if UDP is blocked by the runtime environment.
+- Both the UDP status ping and HTTP fallback cap Minecraft server checks at 5 seconds.
 - Command errors are logged with stack traces and return a friendly embed instead of crashing the bot.
