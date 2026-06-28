@@ -3,6 +3,8 @@
   "botName": "Prizma",
   "ip": "147.185.221.26",
   "port": 59177,
+  "monitorChannelId": "",
+  "monitorIntervalMs": 60000,
   "color": "#2dd4bf",
   "footer": "Prizma - Ideology Prizmarine"
 }

@@ -14,7 +14,10 @@ module.exports = {
       fields: [
         { name: '/help', value: 'Show this command list.', inline: false },
         { name: '/ip', value: 'Show the Minecraft Bedrock server IP and port.', inline: false },
+        { name: '/ping', value: 'Show bot latency, Discord API latency, and uptime.', inline: false },
         { name: '/status', value: 'Check whether the server is online and show server details.', inline: false },
+        { name: '/server', value: 'Show complete Minecraft Bedrock server information.', inline: false },
+        { name: '/motd', value: 'Show the Minecraft server MOTD.', inline: false },
         { name: '/player', value: 'Show current player count and names if available.', inline: false },
         { name: '/rules', value: 'Show the server rules.', inline: false },
       ],

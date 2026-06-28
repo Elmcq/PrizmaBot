@@ -1,6 +1,7 @@
 const { ActivityType, Events, version } = require('discord.js');
 const server = require('../config/server.json');
 const logger = require('../utils/logger');
+const { startServerMonitor } = require('../utils/monitor');
 
 module.exports = {
   name: Events.ClientReady,
@@ -20,5 +21,7 @@ module.exports = {
       commandCount: client.commands.size,
       startupTimeMs: Date.now() - client.startupStartedAt,
     });
+
+    client.serverMonitor = startServerMonitor(client);
   },
 };

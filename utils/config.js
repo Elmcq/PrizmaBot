@@ -41,6 +41,15 @@ function validateServerConfig() {
     failConfig('config/server.json port must be an integer between 1 and 65535');
   }
 
+  if (server.monitorChannelId !== undefined && typeof server.monitorChannelId !== 'string') {
+    failConfig('config/server.json monitorChannelId must be a string when provided');
+  }
+
+  if (server.monitorIntervalMs !== undefined
+    && (!Number.isInteger(server.monitorIntervalMs) || server.monitorIntervalMs < 10000)) {
+    failConfig('config/server.json monitorIntervalMs must be an integer of at least 10000 when provided');
+  }
+
   return server;
 }
 
