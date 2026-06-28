@@ -22,13 +22,19 @@ function isTimeoutError(error) {
 async function getBedrockStatus() {
   try {
     const response = await getBedrockStatusFromUdp();
+
+    if (usingFallback) {
+      logger.info('Bedrock UDP status recovered; mcstatus.io fallback no longer needed.');
+    }
+
     usingFallback = false;
+    fallbackWarningLogged = false;
     return response;
   } catch (udpError) {
     try {
       const response = await getBedrockStatusFromHttp();
 
-      if (!fallbackWarningLogged || !usingFallback) {
+      if (!fallbackWarningLogged) {
         logger.warn(`Bedrock UDP status failed; using mcstatus.io fallback: ${udpError.message}`);
         fallbackWarningLogged = true;
       }
@@ -38,7 +44,6 @@ async function getBedrockStatus() {
       response.udpError = udpError;
       return response;
     } catch (httpError) {
-      usingFallback = false;
       httpError.cause = udpError;
       logger.error(
         `Bedrock UDP status failed (${udpError.message}) and mcstatus.io fallback also failed`,
