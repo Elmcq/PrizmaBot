@@ -3,6 +3,8 @@
   "botName": "Prizma",
   "ip": "147.185.221.26",
   "port": 59177,
+  "statusIp": "127.0.0.1",
+  "statusPort": 19132,
   "color": "#2dd4bf",
   "footer": "Prizma - Ideology Prizmarine"
 }
